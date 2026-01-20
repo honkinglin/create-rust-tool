@@ -1,0 +1,29 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  test-template:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Install cargo-generate
+      run: cargo install cargo-generate
+
+    - name: Generate Project
+      run: |
+        cargo generate --path . --name my-tool --destination . --silent --define "project-name=my-tool"
+
+    - name: Test Generated Project
+      run: |
+        cd my-tool
+        cargo test --verbose
+        cargo run -p my-tool-cli -- --version
